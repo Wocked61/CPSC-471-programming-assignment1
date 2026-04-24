@@ -34,10 +34,9 @@ def recv_msg(sock):
     raw_length = recv_exact(sock, 10)
     if not raw_length:
         return None
-    msg_length = int.from_bytes(raw_length, byteorder='big')
+    msg_length = int(raw_length.decode().strip())
     msg = recv_exact(sock, msg_length)
     return msg.decode()
-
 
 
 def handle_ls(ctrl_sock, data_port, client_addr):
@@ -89,31 +88,34 @@ def main():
     while True:
         ctrl, (client_ip, client_port) = ctrl_sock.accept()
         print(f"Accepted connection from {client_ip}:{client_port}")
-        if not msg(ctrl):
-            break
-        parts = msg(ctrl).split()
-        cmd = parts[0].upper()
+        while True:
+            received_msg = recv_msg(ctrl)
+            if not received_msg:
+                break
+            parts = received_msg.split()
+            cmd = parts[0].upper()
 
-        if cmd == "QUIT":
-            send_msg(ctrl, "Goodbye!")
-            ctrl.close()
-            break
-        elif cmd == "LS":
-            data_port = int(parts[1])
-            handle_ls(ctrl, data_port, (client_ip, client_port))
-        elif cmd == "GET":
-            filename = parts[1]
-            data_port = int(parts[2])
-            handle_get(ctrl, filename, data_port, (client_ip, client_port))
-        elif cmd == "PUT":
-            filename = parts[1]
-            data_port = int(parts[2])
-            handle_put(ctrl, filename, data_port, (client_ip, client_port))
-        else:
-            send_msg(ctrl, f"error: unknown command '{cmd}'")
-
-            ctrl.close()
-            print(f"Closed connection from {client_ip}:{client_port}")
+            if cmd == "QUIT":
+                #send_msg(ctrl, "Goodbye!")
+                print(f"Client {client_ip}:{client_port} requested to quit.")
+                ctrl.close()
+                break
+            elif cmd == "LS":
+                data_port = int(parts[1])
+                handle_ls(ctrl, data_port, (client_ip, client_port))
+            elif cmd == "GET":
+                filename = parts[1]
+                data_port = int(parts[2])
+                handle_get(ctrl, filename, data_port, (client_ip, client_port))
+            elif cmd == "PUT":
+                filename = parts[1]
+                data_port = int(parts[2])
+                handle_put(ctrl, filename, data_port, (client_ip, client_port))
+            else:
+                send_msg(ctrl, f"error: unknown command '{cmd}'")
+                print(f"Unknown command from {client_ip}:{client_port}: {cmd}")
+                ctrl.close()
+                print(f"Closed connection from {client_ip}:{client_port}")
 
 
 if __name__ == "__main__":
