@@ -1,7 +1,7 @@
 # CPSC-471-programming-assignment1
 Names and Emails:
 - Dylan Phan - DylanP@csu.fullerton.edu
-- Logan Arroyo - 
+- Logan Arroyo - loganarroyo@csu.fullerton.edu
 - Vincent Nguyen - nguyenvincent04@csu.fullerton.edu 
 
 
