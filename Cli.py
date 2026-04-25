@@ -36,11 +36,10 @@ def recv_msg(sock):
     return msg.decode()
 
 def get_ephemeral_port():
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.bind(('localhost', 0))
-    sock.listen(1)
-    port = sock.getsockname()[1]
-    sock.close()
+    tmp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    tmp.bind(('localhost', 0))
+    port = tmp.getsockname()[1]
+    tmp.close()
     return port
 
 def do_ls(ctrl_sock):
@@ -72,10 +71,11 @@ def do_get(ctrl_sock, filename):
     if file_content.startswith("ERROR"):
         print(file_content)
     else:
+        print(f"{filename}, {len(file_content)} bytes transferred")
         with open(filename, 'w') as f:
             f.write(file_content)
-        print(f"File '{filename}' downloaded successfully.")
     data_sock.close()
+    recv_msg(ctrl_sock)
 
 def do_put(ctrl_sock, filename):
     data_port = get_ephemeral_port()
@@ -89,7 +89,7 @@ def do_put(ctrl_sock, filename):
     with open(filename, 'r') as f:
         file_content = f.read()
     send_msg(data_sock, file_content)
-    print(f"File '{filename}' uploaded successfully.")
+    print(f"{filename}, {len(file_content)} bytes transferred")
     data_sock.close()
 
 def main():
@@ -101,7 +101,7 @@ def main():
     ctrl_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ctrl_sock.connect((server_ip, server_port))
     while True:
-        cmd = input("Enter command (ls, get <filename>, put <filename>, quit): ")
+        cmd = input("ftp> ")
         if cmd == "ls":
             do_ls(ctrl_sock)
         elif cmd.startswith("get "):
