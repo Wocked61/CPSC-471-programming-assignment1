@@ -57,3 +57,29 @@ https://www.geeksforgeeks.org/socket-programming-in-java/Links to an external si
 
 Socket Programming in Python
 https://www.geeksforgeeks.org/socket-programming-python/
+
+
+Programming Language: Python
+
+How to Execute:
+  Start the server:
+    python server.py <port>
+    Example: python server.py 1234
+
+  Start the client (in a separate terminal):
+    python Cli.py <server_host> <server_port>
+    Example: python Cli.py localhost 1234
+
+  Client commands:
+    ftp> ls               (list files on server)
+    ftp> get <filename>   (download file from server)
+    ftp> put <filename>   (upload file to server)
+    ftp> quit             (disconnect)
+
+Special Notes:
+- Two TCP connections are used per session: a persistent control
+  channel for commands and a data channel opened and closed per
+  transfer.
+- The client picks an ephemeral port for each data transfer and
+  sends it to the server as part of the command.
+- Tested on Windows using Python 3.
