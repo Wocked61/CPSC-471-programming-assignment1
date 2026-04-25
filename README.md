@@ -1,4 +1,10 @@
 # CPSC-471-programming-assignment1
+Names and Emails:
+- Dylan Phan - DylanP@csu.fullerton.edu
+- Logan Arroyo - 
+- Vincent Nguyen - nguyenvincent04@csu.fullerton.edu 
+
+
   Goals:
 
 To understand the challenges of protocol
